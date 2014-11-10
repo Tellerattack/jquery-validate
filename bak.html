@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+	<style type="text/css">
+		form{margin:50px;}
+		form div{border:1px #ccc solid;float: left;clear:both;position: relative;margin:10px 0;}
+		div.current{box-shadow: 0 0 1px 1px #00956d;}
+		div.current .validMsg{display: block}
+		input{border:none;padding:5px 10px;width:300px;}
+		input:focus{border:none;outline:none;}
+		.validMsg{background-color:#fffae1;color:red;font:normal 12px/1.5 Arial,serif,'宋体';position: absolute;right:0;top:0;padding:5px;border-radius: 5px;display: none;}
+	</style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <input class="valid" value="645.@.@@qq.com" type="text" name="email" data-name="邮箱" data-valid="email" data-status="0">
+            <i class="validMsg">邮件格式不正确</i>
+        </div>
+        <div>
+            <input class="valid" type="text" value="琅琊丶" name="nickname" data-name="昵称" data-status="0" data-valid="zh len[6-10]">
+        </div>
+        <div>
+            <input class="valid" type="password" data-name="密码" data-status="0" data-valid="len[6-16]">
+        </div>
+        <div>
+            <select name="" id="">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+        </div>
+        <div>
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+        </div>
+        <div>
+            <input type="radio" name="" id="">
+        </div>
+        <div>
+            <input type="checkbox" name="" id="">
+        </div>
+        <div>
+            <input type="submit" value="提交">
+        </div>
+
+    </form>
+    <script type="text/javascript" src="jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+    ;
+    (function($, window, document, undefined) {
+        var valid = {
+	            empty: {
+	                name: '不能为空',
+	                reg: /\S/,
+	                err: '此处不能为空'
+	            },
+	            email: {
+	                name: 'E-mail',
+	                reg: /^([\w-_]+(?:\.[\w-_]+)*)@((?:[a-z0-9]+(?:-[a-zA-Z0-9]+)*)+\.[a-z]{2,6})$/i,
+	                err: '邮箱格式不正确'
+	            },
+	            zh: {
+	                name: '中文',
+	                reg: /[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+/g,
+	                err: '必须为中文'
+	            },
+	            mobile: {
+	                reg: /^1[3|4|5|8][0-9]\d{8}$/,
+	                err: '手机格式不正确'
+	            },
+	            len: {
+	                name: '长度',
+	                reg: /(len)\[(\d+)-(\d+)\]/g,
+	            }
+        	};
+        var methods = {
+            init: function(options) {
+                methods.globalValid(this);
+            },
+            globalValid: function(form) {
+                var target;
+					target = form || null;
+
+                if (target) {
+                    $.each(target.find('.valid'), function(index, val) {
+                    	methods.singleValid(index,val);
+                    });
+
+                } else {
+                    return false;
+                };
+
+            },
+            triggerEvent: function(options) {
+            	this
+            },
+            singleValid:function(index,val){
+            	var reg, len,result={}, 
+                    i, lenReg = new RegExp(/(len)\[(\d+)-(\d+)\]/),
+                    lenRegArr, min, max, target;
+
+                    if (!val.value) {
+                        result.msg = val.attributes['data-name'].value + valid.empty.name;
+                        result.status = 0;
+                        result.index = index;
+                        return false;
+                    }
+
+                    reg = val.attributes['data-valid'].value.split(' ');
+
+                    for (i = 0, len = reg.length; i < len; i++) {
+
+                        if (reg[i].indexOf('len') !== -1) {
+
+                            lenRegArr = lenReg.exec(reg[i]);
+                            min = lenRegArr[2];
+                            max = lenRegArr[3];
+
+                            if (val.value.length < min || val.value.length > max) {
+                                result.msg = valid[lenRegArr[i]].err;
+                                result.status = 0;
+                                result.index = index;
+                                return false;
+                            } else {
+                                result.status = 1;
+                                result.index = index;
+                            }
+
+                        } else {
+                            if (valid[reg[i]].reg.test(val.value)) {
+                                result.status = 1;
+                            } else {
+                                result.msg = valid[reg[i]].err;
+                                result.status = 0;
+                                result.index = index;
+                                return false;
+                            }
+                        }
+                    }
+                return result;
+            }
+        }
+        $.fn.validation = function() {
+            var method = arguments[0];
+            if (methods[method]) {
+                method = methods[method];
+                arguments = Array.prototype.slice.call(arguments, 1);
+            } else if (typeof(method) == 'object' || !method) {
+                method = methods.init;
+            } else {
+                $.error('Method ' + method + ' does not exist on jQuery.validation Plugin');
+                return this;
+            }
+            return method.apply(this, arguments);
+        }
+    })(jQuery, window, document);
+    $('.valid').on('blur',  function(event) {
+    	event.preventDefault();
+    	$(this).validation('triggerEvent');
+    });
+    console.log($('form').validation());
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    form div {
+        border: 1px #ccc solid;
+        float: left;
+        clear: both;
+        position: relative;
+        margin: 10px 0;
+    }
+    div.current {
+        box-shadow: 0 0 1px 1px #00956d;
+    }
+    div.current .valid-tip,.valid-error {
+        display: block;
+    }
+    input {
+        border: none;
+        padding: 5px 10px;
+        width: 300px;
+    }
+    input:focus {
+        border: none;
+        outline: none;
+    }
+    .valid-tip,.valid-error {
+        color: blue;
+        font: normal 12px/1.5 Arial, serif, '宋体';
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .valid-error{color:red;}
+    .none{display: none;}
+    </style>
+</head>
+
+<body>
+    <form>
+        <div>
+            <input class="valid" value="" type="text" name="email"  data-valid="email">
+            <i class="valid-tip none">输入正确的邮箱地址</i>
+            <i class="valid-error none">输入正确的邮箱地址</i>
+        </div>
+        <div>
+            <input class="valid" type="text" value="" name="nickname" data-valid="zh|len[6~10]">
+            <i class="valid-tip none">输入正确的邮箱地址</i>
+            <i class="valid-error none">输入正确的邮箱地址</i>
+        </div>
+        <div>
+            <input class="valid" type="password" value="" data-valid="len[6~16]">
+            <i class="valid-tip none">输入正确的邮箱地址</i>
+            <i class="valid-error none">密码长度为6-16位</i>
+        </div>
+        <div>
+            <select name="" id="" data-valid="">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+        </div>
+        <div>
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+        </div>
+        <div>
+            <input type="radio" name="" id="">
+        </div>
+        <div>
+            <input type="checkbox" name="" id="">
+        </div>
+        <div>
+            <input type="submit" value="提交">
+        </div>
+
+    </form>
+    <script type="text/javascript" src="jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="jquery-validate.js"></script>
+    <script type="text/javascript">
+    $('form').validate();
+    </script>
+</body>
+
+</html>
