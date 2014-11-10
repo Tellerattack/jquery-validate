@@ -37,7 +37,7 @@
         },
         len: {
             reg: /(len)\[(\d+)-(\d+)\]/g,
-            err:"长度为"
+            err: "长度为"
         }
     };
 
@@ -84,13 +84,17 @@
                     var _name = $this.attr("data-name") ? $this.attr("data-name") : '';
                     var _value = this.value;
                     var lenArr = [];
+
                     $context.find('.valid-tip').addClass('none');
+
                     if (!$this.val()) {
                         $context.find('.valid-error').html(_name + "不能为空").removeClass('none');
                         $this.attr("data-status", 0);
                         return false;
                     }
+
                     var result = splitValid($this.attr('data-valid'), $context.find('.valid-error'), $this);
+                    
                 }
             });
         }
@@ -99,9 +103,9 @@
     function splitValid(validStr, errorDom, target) {
         var lenArr = [],
             validArr = validStr.split("|")
-            _name = target.attr('data-name')?target.attr('data-name'):'';
+        _name = target.attr('data-name') ? target.attr('data-name') : '';
 
-        for(var i = 0,len =validArr.length;i<len;i++){
+        for (var i = 0, len = validArr.length; i < len; i++) {
 
             if (valid[validArr[i]]) {
 
@@ -116,16 +120,16 @@
 
                 lenArr = validArr[i].replace("len[", "").replace("]", "").split("~");
 
-                if(target[0].value.length<Number(lenArr[0]) || target[0].value.length>Number(lenArr[1])){
+                if (target[0].value.length < Number(lenArr[0]) || target[0].value.length > Number(lenArr[1])) {
 
-                    errorDom.html(_name+"长度为"+lenArr[0]+"-"+lenArr[1]+"位").removeClass('none');
+                    errorDom.html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位").removeClass('none');
 
                     target.attr("data-status", 0);
 
-                    return false;    
-                } 
+                    return false;
+                }
             }
-            target.attr("data-status",1);
+            target.attr("data-status", 1);
             return true;
         }
 
