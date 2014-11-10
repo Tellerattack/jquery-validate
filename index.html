@@ -44,26 +44,29 @@
 <body>
     <form>
         <div>
-            <input class="valid" value="" type="text" name="email" data-name="邮箱地址"  data-valid="email">
+            <input class="valid required" value="" type="text" name="email" data-name="邮箱地址"  data-valid="email">
             <i class="valid-tip none">输入邮箱地址</i>
             <i class="valid-error none">输入邮箱地址</i>
         </div>
         <div>
-            <input class="valid" type="text" value="" name="nickname" data-name="姓名" data-valid="zh|len[6~10]">
+            <input class="valid required" type="text" value="" name="nickname" data-name="姓名" data-valid="zh|len[6~10]">
             <i class="valid-tip none">请输入您的名字</i>
             <i class="valid-error none">输入邮箱地址</i>
         </div>
         <div>
-            <input class="valid" type="password" value="" data-name="密码" data-valid="len[6~16]">
+            <input class="valid required" type="password" value="" data-name="密码" data-valid="len[6~16]">
             <i class="valid-tip none">请输入6-16位英文或字符_ . 的密码</i>
             <i class="valid-error none">输入邮箱地址</i>
         </div>
         <div>
             <select name="" id="" data-valid="">
+                <option value="">null</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
             </select>
+            <i class="valid-tip none">请输入6-16位英文或字符_ . 的密码</i>
+            <i class="valid-error none">输入邮箱地址</i>
         </div>
         <div>
             <textarea name="" id="" cols="30" rows="10"></textarea>

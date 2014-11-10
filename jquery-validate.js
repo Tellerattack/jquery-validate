@@ -71,12 +71,13 @@
             var _this = this;
             var _element = _this.$element;
 
-            _element.find('input[data-valid]').on({
+            _element.find('.required').on({
                 focus: function(event) {
                     var $this = $(this);
                     var $context = $this.parents().eq(0);
                     $context.find('.valid-tip').removeClass('none');
                     $context.find('.valid-error').addClass('none');
+                    console.log($this);
                 },
                 blur: function(event) {
                     var $this = $(this);
@@ -85,6 +86,8 @@
                     var _value = this.value;
                     var lenArr = [];
 
+                    console.log($this);
+                    
                     $context.find('.valid-tip').addClass('none');
 
                     if (!$this.val()) {
@@ -99,7 +102,7 @@
             });
         },
         generator:function(){
-            
+
         }
     }
 
