@@ -91,7 +91,6 @@
                         return false;
                     }
                     var result = splitValid($this.attr('data-valid'), $context.find('.valid-error'), $this);
-                    console.log(result);
                 }
             });
         }
@@ -109,7 +108,7 @@
                 if (!valid[validArr[i]].reg.test(target[0].value)) {
 
                     errorDom.html(valid[validArr[i]].err).removeClass('none');
-
+                    target.attr("data-status", 0);
                     return false;
                 };
 
@@ -121,10 +120,12 @@
 
                     errorDom.html(_name+"长度为"+lenArr[0]+"-"+lenArr[1]+"位").removeClass('none');
 
+                    target.attr("data-status", 0);
+
                     return false;    
                 } 
             }
-
+            target.attr("data-status",1);
             return true;
         }
 
