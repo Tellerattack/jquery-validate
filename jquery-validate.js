@@ -94,9 +94,12 @@
                     }
 
                     var result = splitValid($this.attr('data-valid'), $context.find('.valid-error'), $this);
-                    
+
                 }
             });
+        },
+        generator:function(){
+            
         }
     }
 
