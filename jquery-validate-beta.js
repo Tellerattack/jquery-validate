@@ -1,4 +1,15 @@
-(function($) {
+(function(factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // CommonJS
+        factory(require('jquery'));
+    } else {
+        // Browser globals
+        factory(jQuery, window, document);
+    }
+}(function($, window, document, undefined) {
 
     var isIE6 = !!(document.all && !window.XMLHttpRequest);
 
@@ -37,6 +48,7 @@
                     _element = $(this);
 
                 _element.find('.required').on({
+
                     focus: function(event) {
 
                         var $this = $(this);
@@ -55,6 +67,7 @@
                         }
 
                     },
+
                     blur: function(event) {
                         var $this = $(this);
                         var $context = $this.parents().eq(0);
@@ -91,12 +104,14 @@
 
 
                     },
+
                     change: function(event) {
                         var $this = $(this);
                         var $context = $this.parents().eq(0);
                         showTip($context);
                         $this.attr("data-status", 0);
                     }
+
                 });
 
             });
@@ -130,6 +145,7 @@
             _name = target.attr('data-name') ? target.attr('data-name') : '',
 
             _result = false,
+
             reg = null;
 
         for (var i = 0, len = validArr.length; i < len; i++) {
@@ -177,7 +193,7 @@
 
             if (validArr[i] === "ajax") {
 
-                var postName = target.attr("name");
+                var postName = target.attr("name") || "validname";
 
                 _result = false;
 
@@ -231,6 +247,7 @@
     }
 
     function showTip(target, context) {
+
         if (arguments.length < 2) {
 
             target.find(".valid-success,.valid-error,.valid-tip,.valid-loading").addClass('none');
@@ -257,4 +274,4 @@
         return method.apply(this, arguments);
     }
 
-}(jQuery));
+}))
