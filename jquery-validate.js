@@ -11,11 +11,7 @@
     }
 }(function($, window, document, undefined) {
 
-    var screenH = document.documentElement.clientHeight,
-
-        screenW = document.documentElement.clientWidth,
-
-        isIE6 = !!(document.all && !window.XMLHttpRequest),
+    var isIE6 = !!(document.all && !window.XMLHttpRequest),
 
         pluginName = 'validate',
 
@@ -44,6 +40,7 @@
     //validate 构造函数
 
     function validate(element, options) {
+
         this.element = element;
 
         this.$element = $(this.element);
@@ -60,7 +57,16 @@
 
         this.levelTwoIndex = [];
 
-        this.init();
+        if(typeof options ==="undefined"){
+
+            this.init();
+
+        }else{
+
+            this[options]();
+
+        }
+
     }
 
 
@@ -73,11 +79,24 @@
 
             _element.find('.required').on({
                 focus: function(event) {
+
                     var $this = $(this);
+
                     var $context = $this.parents().eq(0);
-                    $context.find('.valid-tip').removeClass('none');
-                    $context.find('.valid-error').addClass('none');
-                    console.log($this);
+
+                    if(!$context.find('.valid-loading').hasClass('none')){
+
+                        return false;
+                    }
+
+                    if (!parseInt($this.attr("data-status"))) {
+
+                        $context.find('.valid-tip').removeClass('none');
+
+                    }
+
+                    $context.find('.valid-error,.valid-success').addClass('none');
+
                 },
                 blur: function(event) {
                     var $this = $(this);
@@ -86,8 +105,6 @@
                     var _value = this.value;
                     var lenArr = [];
 
-                    console.log($this);
-                    
                     $context.find('.valid-tip').addClass('none');
 
                     if (!$this.val()) {
@@ -96,55 +113,126 @@
                         return false;
                     }
 
-                    var result = splitValid($this.attr('data-valid'), $context.find('.valid-error'), $this);
+                    splitValid($this.attr('data-valid'), $this, $context);
+
 
                 }
             });
         },
-        generator:function(){
-
+        generator: function() {
+            console.log(this);
         }
     }
 
-    function splitValid(validStr, errorDom, target) {
+    function splitValid(validStr, target, context) {
         var lenArr = [],
-            validArr = validStr.split("|")
-        _name = target.attr('data-name') ? target.attr('data-name') : '';
+            validArr = validStr.split("|"),
+            _name = target.attr('data-name') ? target.attr('data-name') : '',
+            _result = false;
 
-        for (var i = 0, len = validArr.length; i < len; i++) {
+        for (var i = 0, len = validArr.length; i <= len; i++) {
 
             if (valid[validArr[i]]) {
 
                 if (!valid[validArr[i]].reg.test(target[0].value)) {
 
-                    errorDom.html(valid[validArr[i]].err).removeClass('none');
+                    context.find('.valid-error').html(valid[validArr[i]].err).removeClass('none');
+
                     target.attr("data-status", 0);
+
                     return false;
+
+                } else {
+
+                    _result = true;
+
                 };
 
-            } else if (/len/.test(validArr[i])) {
+            }
+
+            if (/len/.test(validArr[i])) {
 
                 lenArr = validArr[i].replace("len[", "").replace("]", "").split("~");
 
                 if (target[0].value.length < Number(lenArr[0]) || target[0].value.length > Number(lenArr[1])) {
 
-                    errorDom.html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位").removeClass('none');
+                    context.find('.valid-error').html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位").removeClass('none');
 
                     target.attr("data-status", 0);
 
                     return false;
+
+                } else {
+
+                    _result = true;
+
                 }
+
             }
+
+            if (validArr[i] === "ajax") {
+
+                var postName = target.attr("name");
+
+                _result = false;
+
+                context.find('.valid-loading').removeClass('none');
+
+                if (!target.data("limit")) {
+
+                    target.data("limit",1);
+
+                    $.get(target.attr("data-validUrl"), {
+
+                        postName: target.val()
+
+                    }, function(data) {
+
+                        target.data("limit",0);
+                        
+                        context.find('.valid-loading').addClass('none');
+
+                        if (!data.status) {
+
+                            context.find('.valid-error').html(data.info).removeClass('none');
+
+                            target.attr("data-status", 0);
+
+                        } else {
+
+                            target.attr("data-status", 1);
+
+                            context.find('.valid-success').removeClass('none');
+
+                            _result = true;
+                        }
+
+                    }, "json");
+
+                }
+
+            }
+
+        }
+
+        if (_result) {
+
             target.attr("data-status", 1);
-            return true;
+
+            context.find('.valid-success').removeClass('none');
         }
 
     }
 
+
     $.fn[pluginName] = function(options) {
+
         return this.each(function() {
+
             if (!$.data(this, pluginName)) {
+
                 $.data(this, pluginName, new validate(this, options));
+
             }
         });
     };

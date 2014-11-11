@@ -15,7 +15,7 @@
     div.current {
         box-shadow: 0 0 1px 1px #00956d;
     }
-    div.current .valid-tip,.valid-error {
+    div.current .valid-tip,.valid-error,.valid-success {
         display: block;
     }
     input {
@@ -27,7 +27,11 @@
         border: none;
         outline: none;
     }
-    .valid-tip,.valid-error {
+    .other .valid-tip,.other .valid-error,.other .valid-success{
+        right:-90px;
+        padding:0;
+    }
+    .valid-tip,.valid-error,.valid-success {
         color: blue;
         font: normal 12px/1.5 Arial, serif, '宋体';
         position: absolute;
@@ -37,6 +41,14 @@
         border-radius: 5px;
     }
     .valid-error{color:red;}
+    .valid-success{
+        background:url(validator_default.png) -16px 0 no-repeat; 
+        width:16px;
+        height:16px;
+        padding:0;
+        top:5px;
+        right:5px;
+    }
     .none{display: none;}
     </style>
 </head>
@@ -44,31 +56,36 @@
 <body>
     <form>
         <div>
-            <input class="valid required" value="" type="text" name="email" data-name="邮箱地址"  data-valid="email">
+            <input class="valid required" value="" type="text" name="email" data-name="邮箱地址" data-validUrl="valid.php"  data-valid="email|ajax">
             <i class="valid-tip none">输入邮箱地址</i>
-            <i class="valid-error none">输入邮箱地址</i>
+            <i class="valid-error none"></i>
+            <i class="valid-success none"></i>
+            <i class="valid-loading none"><img src="loading.gif" width="14" height="14"></i>
         </div>
         <div>
-            <input class="valid required" type="text" value="" name="nickname" data-name="姓名" data-valid="zh|len[6~10]">
+            <input class="valid required" type="text" value="" name="nickname" data-name="姓名" data-valid="zh|len[2~6]">
             <i class="valid-tip none">请输入您的名字</i>
             <i class="valid-error none">输入邮箱地址</i>
+            <i class="valid-success none"></i>
         </div>
         <div>
             <input class="valid required" type="password" value="" data-name="密码" data-valid="len[6~16]">
             <i class="valid-tip none">请输入6-16位英文或字符_ . 的密码</i>
             <i class="valid-error none">输入邮箱地址</i>
+            <i class="valid-success none"></i>
         </div>
-        <div>
-            <select name="" id="" data-valid="">
-                <option value="">null</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
+        <div class="other">
+            <select class="required" name="" id="" data-name="省份" >
+                <option value="">value为空</option>
+                <option value="0">value为0</option>
+                <option value="1">value为1</option>
+                <option value="2">value为2</option>
             </select>
-            <i class="valid-tip none">请输入6-16位英文或字符_ . 的密码</i>
-            <i class="valid-error none">输入邮箱地址</i>
+            <i class="valid-tip none">请选择省份</i>
+            <i class="valid-error none"></i>
+            <i class="valid-success none"></i>
         </div>
-        <div>
+        <!-- <div>
             <textarea name="" id="" cols="30" rows="10"></textarea>
         </div>
         <div>
@@ -76,16 +93,42 @@
         </div>
         <div>
             <input type="checkbox" name="" id="">
-        </div>
+        </div> -->
         <div>
             <input type="submit" value="提交">
         </div>
 
     </form>
     <script type="text/javascript" src="jquery-1.11.1.js"></script>
-    <script type="text/javascript" src="jquery-validate.js"></script>
+    <script type="text/javascript" src="jquery-validate-beta.js"></script>
     <script type="text/javascript">
     $('form').validate();
+
+    $('form').on('submit', function(event) {
+        event.preventDefault();
+        var $this = $(this);
+        $.ajax({
+            url: $this.attr('action'),
+            type: 'POST',
+            dataType: 'JSON',
+            data: $this.serialize(),
+            beforeSend:function(){
+               if(!$this.validate("generator")){
+                return false;
+               }
+            }
+        })
+        .done(function() {
+            console.log("success");
+        })
+        .fail(function() {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+        
+    });
     </script>
 </body>
 
