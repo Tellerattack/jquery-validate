@@ -22,9 +22,9 @@
             reg: /^[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+$/g,
             err: '必须为中文'
         },
-        num:{
-            reg:/^\d+$/g,
-            err:"必须为数字"
+        num: {
+            reg: /^\d+$/g,
+            err: "必须为数字"
         },
         mobile: {
             reg: /^1[3|4|5|8][0-9]\d{8}$/,
@@ -43,7 +43,12 @@
 
             return this.each(function() {
 
-                var setting = $.extend(true,{loadingSrc:"images/loading.gif"},{regular:valid},options),
+                var setting = $.extend(true, {
+                        element: this,
+                        loadingSrc: "images/loading.gif"
+                    }, {
+                        regular: valid
+                    }, options),
 
                     _element = $(this);
 
@@ -56,14 +61,24 @@
                         var $context = $this.parents().eq(0);
 
                         var $tip = $context.find('.valid-tip');
+
                         var _initText = $this.attr("data-tip") || '';
 
-                        if ($tip.hasClass('loading')) {return false;}
+                        if ($tip.hasClass('loading')) {
+                            return false;
+                        }
+
+                        if($this.attr("data-valid").indexOf("password")!==-1){
+
+                            $this.attr("data-status", 0);
+
+                            showTip($tip);
+                        }
 
                         if (!parseInt($this.attr("data-status"))) {
-                            if(_initText){
+                            if (_initText) {
                                 $tip.html(_initText);
-                                showTip("init",$tip);
+                                showTip("init", $tip);
                             }
 
                         }
@@ -80,6 +95,26 @@
 
                         $tip.addClass('none');
 
+                        if($this.attr('data-target')){
+                            var $Compare = $("#"+$this.attr('data-target'));
+
+                            if($Compare[0].value !== $this[0].value){
+
+                                $Compare.attr("data-status",0);
+
+                                $Compare.parents().eq(0).find('.valid-tip').html("确认密码与密码不一致");
+
+                                showTip("error", $Compare.parents().eq(0).find('.valid-tip'));
+                            }else{
+
+                                $Compare.attr("data-status",1);
+
+                                $Compare.parents().eq(0).find('.valid-tip').html("");
+
+                                showTip("success", $Compare.parents().eq(0).find('.valid-tip'));
+                            }
+                        }
+
                         if (!$this.val()) {
 
                             $context.find('.valid-tip').html(_name + "不能为空");
@@ -93,12 +128,14 @@
 
                         if (Number($this.attr('data-status'))) {
 
+                            showTip('success', $tip);
+
                             return false;
                         }
 
                         if ($this.attr('data-valid')) {
 
-                            splitValid($this.attr('data-valid'), $this, $context,setting);
+                            splitValid($this.attr('data-valid'), $this, $context, setting);
 
                         } else {
 
@@ -113,8 +150,11 @@
                         var $this = $(this);
                         var $context = $this.parents().eq(0);
                         var $tip = $context.find('.valid-tip');
+
                         showTip($tip);
+
                         $this.attr("data-status", 0);
+
                     }
 
                 });
@@ -141,7 +181,7 @@
         }
     };
 
-    function splitValid(validStr, target, context,setting) {
+    function splitValid(validStr, target, context, setting) {
 
         var lenArr = [],
 
@@ -165,7 +205,7 @@
 
                     $tip.html(valid[validArr[i]].err);
 
-                    showTip("error",$tip);
+                    showTip("error", $tip);
 
                     target.attr("data-status", 0);
 
@@ -186,8 +226,8 @@
                 if (target[0].value.length < Number(lenArr[0]) || target[0].value.length > Number(lenArr[1])) {
 
                     $tip.html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位");
-                    
-                    showTip("error",$tip);
+
+                    showTip("error", $tip);
 
                     target.attr("data-status", 0);
 
@@ -201,6 +241,26 @@
 
             }
 
+            if (validArr[i] === "password") {
+
+                var password = $(setting.element).find('input[type=password]');
+
+                if (password.eq(0).val() !== password.eq(1).val()) {
+
+                    $tip.html("确认密码与密码不一致");
+
+                    showTip("error", $tip);
+
+                    return false;
+
+                } else {
+
+                    $tip.html("");
+
+                    _result = true;
+
+                }
+            }
 
             if (validArr[i] === "ajax") {
 
@@ -208,25 +268,25 @@
 
                 _result = false;
 
-                showTip("loading",$tip,setting.loadingSrc);
+                showTip("loading", $tip, setting.loadingSrc);
 
                 if (!target.data("limit")) {
 
                     target.data("limit", 1);
 
-                    $.get(target.attr("data-validUrl")+'?'+postName+'='+target.val(),function(data) {
+                    $.get(target.attr("data-validUrl") + '?' + postName + '=' + target.val(), function(data) {
 
                         target.data("limit", 0);
 
                         showTip($tip);
 
-                        setting.success ? setting.success():false;
+                        setting.success ? setting.success() : false;
 
                         if (!data.status) {
 
                             $tip.html(data.info);
 
-                            showTip("error",$tip);
+                            showTip("error", $tip);
 
                             target.attr("data-status", 0);
 
@@ -236,7 +296,7 @@
 
                             target.attr("data-status", 1);
 
-                            showTip("success",$tip);
+                            showTip("success", $tip);
                         }
 
                     }, "json");
@@ -251,17 +311,17 @@
 
             target.attr("data-status", 1);
 
-            showTip("success",$tip);
+            showTip("success", $tip);
         }
 
     }
 
-    function showTip(target,tip,loadingSrc) {
+    function showTip(target, tip, loadingSrc) {
 
 
-        if(target === "loading"){
+        if (target === "loading") {
 
-            tip.html('<img src="'+loadingSrc+'">');
+            tip.html('<img src="' + loadingSrc + '">');
 
         }
 
@@ -274,7 +334,7 @@
 
         tip.removeClass('success error loading').addClass('none');
 
-        if(target === "init"){
+        if (target === "init") {
 
             tip.removeClass('success error loading').removeClass('none');
 
