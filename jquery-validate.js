@@ -95,7 +95,8 @@
 
                         $tip.addClass('none');
 
-                        if($this.attr('data-target')){
+                        if($this.attr('data-target') && $this.val()){
+
                             var $Compare = $("#"+$this.attr('data-target'));
 
                             if($Compare[0].value !== $this[0].value){
