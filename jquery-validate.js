@@ -145,6 +145,7 @@
                             $this.attr("data-status", 1);
                         }
 
+                        setting.onBlur ? setting.onBlur() : false;
                     },
 
                     change: function(event) {
@@ -170,9 +171,16 @@
 
                 var $context = $(el).parents().eq(0);
 
+                var $tip = $context.find('.valid-tip');
+
                 if (typeof $(el).attr("data-status") === "undefined" || !Number($(el).attr("data-status"))) {
 
-                    showTip($tip);
+                    if(!$tip.hasClass('loading')){
+                        
+                        $tip.html($(el).attr("data-tip"));
+
+                        showTip('error',$tip);
+                    }
 
                     result = false;
                 }
@@ -341,6 +349,7 @@
 
             return false;
         }
+        tip.addClass('loading');
         tip.addClass(target).removeClass('none');
     }
 
