@@ -40,8 +40,8 @@
         padding: 5px;
         border-radius: 5px;
     }
-    .valid-error{color:red;}
-    .valid-success{
+    .valid-tip.error{color:red;}
+    .valid-tip.success{
         background:url(validator_default.png) -16px 0 no-repeat; 
         width:16px;
         height:16px;
@@ -56,20 +56,15 @@
 <body>
     <form>
         <div>
-            <input class="valid required" value="" type="text" name="email" data-name="邮箱地址" data-validUrl="valid.php"  data-valid="email|ajax">
-            <i class="valid-tip none">输入邮箱地址</i>
-            <i class="valid-error none"></i>
-            <i class="valid-success none"></i>
-            <i class="valid-loading none"><img src="loading.gif" width="14" height="14"></i>
+            <input class="valid required" value="" type="text" name="email" data-name="邮箱地址" data-tip="请输入您的邮箱" data-validUrl="valid.php"  data-valid="email|ajax">
+            <i class="valid-tip none"></i>
         </div>
         <div>
-            <input class="valid required" type="text" value="" name="nickname" data-name="姓名" data-valid="zh|len[2~6]">
-            <i class="valid-tip none">请输入您的名字</i>
-            <i class="valid-error none">输入邮箱地址</i>
-            <i class="valid-success none"></i>
+            <input class="valid required" type="text" value="" name="nickname" data-tip="请输入您的姓名" data-name="姓名" data-valid="zh|len[2~6]">
+            <i class="valid-tip"></i>
         </div>
         <div>
-            <input class="valid required" type="password" value="" data-name="密码" data-valid="len[6~16]">
+            <input class="valid required" type="password" value="" data-name="密码" data-tip="请输入6-16个字符（支持数字，大小写英文，符号）" data-valid="len[6~16]">
             <i class="valid-tip none">请输入6-16位英文或字符_ . 的密码</i>
             <i class="valid-error none">输入邮箱地址</i>
             <i class="valid-success none"></i>
@@ -106,9 +101,13 @@
 
     </form>
     <script type="text/javascript" src="jquery-1.11.1.js"></script>
-    <script type="text/javascript" src="jquery-validate-beta.js"></script>
+    <script type="text/javascript" src="jquery-validate.js"></script>
     <script type="text/javascript">
-    $('form').validate();
+    $('form').validate({
+        success:function(){
+            console.log(arguments)
+        }
+    });
 
     $('form').on('submit', function(event) {
         event.preventDefault();

@@ -11,12 +11,7 @@
     }
 }(function($, window, document, undefined) {
 
-    var isIE6 = !!(document.all && !window.XMLHttpRequest),
-
-        pluginName = 'validate',
-
-        defaults = {};
-
+    var isIE6 = !!(document.all && !window.XMLHttpRequest);
 
     var valid = {
         email: {
@@ -24,8 +19,12 @@
             err: '邮箱格式不正确'
         },
         zh: {
-            reg: /[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+/g,
+            reg: /^[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+$/g,
             err: '必须为中文'
+        },
+        num:{
+            reg:/^\d+$/g,
+            err:"必须为数字"
         },
         mobile: {
             reg: /^1[3|4|5|8][0-9]\d{8}$/,
@@ -33,110 +32,140 @@
         },
         len: {
             reg: /(len)\[(\d+)-(\d+)\]/g,
-            err: "长度为"
+            err: "长度不符合要求"
         }
     };
 
-    //validate 构造函数
 
-    function validate(element, options) {
+    var methods = {
+        //初始化
+        init: function(options) {
 
-        this.element = element;
+            return this.each(function() {
 
-        this.$element = $(this.element);
+                var setting = $.extend(true,{loadingSrc:"images/loading.gif"},{regular:valid},options),
 
-        this.options = $.extend({}, defaults, options);
+                    _element = $(this);
 
-        this._defaults = defaults;
+                _element.find('.required').on({
 
-        this._name = pluginName;
+                    focus: function(event) {
 
-        this.$body = $('body');
+                        var $this = $(this);
 
-        this.levelOneIndex = 0;
+                        var $context = $this.parents().eq(0);
 
-        this.levelTwoIndex = [];
+                        var $tip = $context.find('.valid-tip');
+                        var _initText = $this.attr("data-tip") || '';
 
-        if(typeof options ==="undefined"){
+                        if ($tip.hasClass('loading')) {return false;}
 
-            this.init();
+                        if (!parseInt($this.attr("data-status"))) {
+                            if(_initText){
+                                $tip.html(_initText);
+                                showTip("init",$tip);
+                            }
 
-        }else{
+                        }
 
-            this[options]();
+                    },
 
-        }
+                    blur: function(event) {
+                        var $this = $(this);
+                        var $context = $this.parents().eq(0);
+                        var _name = $this.attr("data-name") ? $this.attr("data-name") : '';
+                        var _value = this.value;
+                        var lenArr = [];
+                        var $tip = $context.find('.valid-tip');
 
-    }
+                        $tip.addClass('none');
 
+                        if (!$this.val()) {
 
-    //validate 原型
+                            $context.find('.valid-tip').html(_name + "不能为空");
 
-    validate.prototype = {
-        init: function() {
-            var _this = this;
-            var _element = _this.$element;
+                            showTip('error', $tip);
 
-            _element.find('.required').on({
-                focus: function(event) {
+                            $this.attr("data-status", 0);
 
-                    var $this = $(this);
+                            return false;
+                        }
 
-                    var $context = $this.parents().eq(0);
+                        if (Number($this.attr('data-status'))) {
 
-                    if(!$context.find('.valid-loading').hasClass('none')){
+                            return false;
+                        }
 
-                        return false;
-                    }
+                        if ($this.attr('data-valid')) {
 
-                    if (!parseInt($this.attr("data-status"))) {
+                            splitValid($this.attr('data-valid'), $this, $context,setting);
 
-                        $context.find('.valid-tip').removeClass('none');
+                        } else {
 
-                    }
+                            showTip('success', $tip);
 
-                    $context.find('.valid-error,.valid-success').addClass('none');
+                            $this.attr("data-status", 1);
+                        }
 
-                },
-                blur: function(event) {
-                    var $this = $(this);
-                    var $context = $this.parents().eq(0);
-                    var _name = $this.attr("data-name") ? $this.attr("data-name") : '';
-                    var _value = this.value;
-                    var lenArr = [];
+                    },
 
-                    $context.find('.valid-tip').addClass('none');
-
-                    if (!$this.val()) {
-                        $context.find('.valid-error').html(_name + "不能为空").removeClass('none');
+                    change: function(event) {
+                        var $this = $(this);
+                        var $context = $this.parents().eq(0);
+                        var $tip = $context.find('.valid-tip');
+                        showTip($tip);
                         $this.attr("data-status", 0);
-                        return false;
                     }
 
-                    splitValid($this.attr('data-valid'), $this, $context);
+                });
 
-
-                }
             });
         },
-        generator: function() {
-            console.log(this);
+        generator: function(options) {
+
+            var result = true;
+
+            this.find('.required').each(function(index, el) {
+
+                var $context = $(el).parents().eq(0);
+
+                if (typeof $(el).attr("data-status") === "undefined" || !Number($(el).attr("data-status"))) {
+
+                    showTip($tip);
+
+                    result = false;
+                }
+            });
+
+            return result;
         }
-    }
+    };
 
-    function splitValid(validStr, target, context) {
+    function splitValid(validStr, target, context,setting) {
+
         var lenArr = [],
-            validArr = validStr.split("|"),
-            _name = target.attr('data-name') ? target.attr('data-name') : '',
-            _result = false;
 
-        for (var i = 0, len = validArr.length; i <= len; i++) {
+            validArr = validStr.split("|"),
+
+            _name = target.attr('data-name') ? target.attr('data-name') : '',
+
+            _result = false,
+
+            reg = null,
+
+            $tip = context.find('.valid-tip');
+
+        for (var i = 0, len = validArr.length; i < len; i++) {
 
             if (valid[validArr[i]]) {
 
-                if (!valid[validArr[i]].reg.test(target[0].value)) {
+                reg = new RegExp(valid[validArr[i]].reg);
 
-                    context.find('.valid-error').html(valid[validArr[i]].err).removeClass('none');
+                if (!reg.test(target[0].value)) {
+
+                    $tip.html(valid[validArr[i]].err);
+
+                    showTip("error",$tip);
 
                     target.attr("data-status", 0);
 
@@ -156,7 +185,9 @@
 
                 if (target[0].value.length < Number(lenArr[0]) || target[0].value.length > Number(lenArr[1])) {
 
-                    context.find('.valid-error').html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位").removeClass('none');
+                    $tip.html(_name + "长度为" + lenArr[0] + "-" + lenArr[1] + "位");
+                    
+                    showTip("error",$tip);
 
                     target.attr("data-status", 0);
 
@@ -170,41 +201,42 @@
 
             }
 
+
             if (validArr[i] === "ajax") {
 
-                var postName = target.attr("name");
+                var postName = target.attr("name") || "validname";
 
                 _result = false;
 
-                context.find('.valid-loading').removeClass('none');
+                showTip("loading",$tip,setting.loadingSrc);
 
                 if (!target.data("limit")) {
 
-                    target.data("limit",1);
+                    target.data("limit", 1);
 
-                    $.get(target.attr("data-validUrl"), {
+                    $.get(target.attr("data-validUrl")+'?'+postName+'='+target.val(),function(data) {
 
-                        postName: target.val()
+                        target.data("limit", 0);
 
-                    }, function(data) {
+                        showTip($tip);
 
-                        target.data("limit",0);
-                        
-                        context.find('.valid-loading').addClass('none');
+                        setting.success ? setting.success():false;
 
                         if (!data.status) {
 
-                            context.find('.valid-error').html(data.info).removeClass('none');
+                            $tip.html(data.info);
+
+                            showTip("error",$tip);
 
                             target.attr("data-status", 0);
 
                         } else {
 
+                            _result = true;
+
                             target.attr("data-status", 1);
 
-                            context.find('.valid-success').removeClass('none');
-
-                            _result = true;
+                            showTip("success",$tip);
                         }
 
                     }, "json");
@@ -219,22 +251,50 @@
 
             target.attr("data-status", 1);
 
-            context.find('.valid-success').removeClass('none');
+            showTip("success",$tip);
         }
 
     }
 
+    function showTip(target,tip,loadingSrc) {
 
-    $.fn[pluginName] = function(options) {
 
-        return this.each(function() {
+        if(target === "loading"){
 
-            if (!$.data(this, pluginName)) {
+            tip.html('<img src="'+loadingSrc+'">');
 
-                $.data(this, pluginName, new validate(this, options));
+        }
 
-            }
-        });
-    };
+        if (arguments.length < 2) {
 
-}));
+            target.removeClass('success error loading').addClass('none').html('');
+
+            return false;
+        }
+
+        tip.removeClass('success error loading').addClass('none');
+
+        if(target === "init"){
+
+            tip.removeClass('success error loading').removeClass('none');
+
+            return false;
+        }
+        tip.addClass(target).removeClass('none');
+    }
+
+    $.fn.validate = function() {
+        var method = arguments[0];
+        if (methods[method]) {
+            method = methods[method];
+            arguments = Array.prototype.slice.call(arguments, 1);
+        } else if (typeof(method) == 'object' || !method) {
+            method = methods.init;
+        } else {
+            $.error('Method ' + method + ' does not exist on jQuery.validate Plugin');
+            return this;
+        }
+        return method.apply(this, arguments);
+    }
+
+}))
