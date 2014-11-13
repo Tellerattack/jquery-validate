@@ -19,7 +19,7 @@
             err: '邮箱格式不正确'
         },
         zh: {
-            reg: /^[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+$/g,
+            reg: /^[\u2E80-\u2EFF\u2F00-\u2FDF\u3000-\u303F\u31C0-\u31EF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FBF\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFFEF]+$/,
             err: '必须为中文'
         },
         num: {
@@ -31,11 +31,11 @@
             err: '手机格式不正确'
         },
         len: {
-            reg: /(len)\[(\d+)-(\d+)\]/g,
+            reg: /(len)\[(\d+)-(\d+)\]/,
             err: "长度不符合要求"
         },
         password: {
-            reg: /^[\s|\S]{6,16}$/g,
+            reg: /^[\s|\S]{6,16}$/,
             err: "密码长度为6-16位"
         }
     };
@@ -178,19 +178,17 @@
                         }
 
                         setting.onBlur ? setting.onBlur() : false;
+                    },change: function(event) {
+                        var $this = $(this);
+                        var $context = $this.parents().eq(0);
+                        var $tip = $context.find('.valid-tip');
+
+                        showTip($tip);
+
+                        $this.attr("data-status", 0);
+
+                        setting.onChange ? setting.onChange() : false;
                     }
-                    //又恶心了,不知道绑change事件干嘛!
-                    // ,change: function(event) {
-                    //     // var $this = $(this);
-                    //     // var $context = $this.parents().eq(0);
-                    //     // var $tip = $context.find('.valid-tip');
-
-                    //     // showTip($tip);
-
-                    //     // $this.attr("data-status", 0);
-
-                    //     // setting.onChange ? setting.onChange() : false;
-                    // }
 
                 });
 
@@ -252,9 +250,8 @@
 
             if (valid[validArr[i]]) {
 
-                reg = new RegExp(valid[validArr[i]].reg);
 
-                if (!reg.test(target[0].value)) {
+                if (!valid[validArr[i]].reg.test(target[0].value)) {
 
                     $tip.html(valid[validArr[i]].err);
 
