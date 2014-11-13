@@ -126,7 +126,13 @@
 
                                 //如果当前element和目标element一致时
 
+<<<<<<< HEAD
                                 if ($this.attr('data-target') === $this.attr('id')) {
+=======
+                        if($this.attr('data-target') && $this.val()){
+
+                            var $Compare = $("#"+$this.attr('data-target'));
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
 
                                     return false;
 
@@ -178,12 +184,21 @@
                         }
 
                         setting.onBlur ? setting.onBlur() : false;
+<<<<<<< HEAD
                     }
                     //又恶心了,不知道绑change事件干嘛!
                     // ,change: function(event) {
                     //     // var $this = $(this);
                     //     // var $context = $this.parents().eq(0);
                     //     // var $tip = $context.find('.valid-tip');
+=======
+                    },
+
+                    change: function(event) {
+                        var $this = $(this);
+                        var $context = $this.parents().eq(0);
+                        var $tip = $context.find('.valid-tip');
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
 
                     //     // showTip($tip);
 
@@ -206,6 +221,7 @@
 
                 var $tip = $context.find('.valid-tip');
 
+<<<<<<< HEAD
                 var message = {
                     success: $(el).attr("data-success") || '',
                     error: $(el).attr("data-error") || '',
@@ -222,6 +238,15 @@
                         }
 
                         showTip('error', $tip);
+=======
+                if (typeof $(el).attr("data-status") === "undefined" || !Number($(el).attr("data-status"))) {
+
+                    if(!$tip.hasClass('loading')){
+                        
+                        $tip.html($(el).attr("data-tip"));
+
+                        showTip('error',$tip);
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
                     }
 
                     result = false;
@@ -395,9 +420,13 @@
 
             return false;
         }
+<<<<<<< HEAD
 
         //tip.addClass('loading');
 
+=======
+        tip.addClass('loading');
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
         tip.addClass(target).removeClass('none');
     }
 
