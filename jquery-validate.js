@@ -33,6 +33,10 @@
         len: {
             reg: /(len)\[(\d+)-(\d+)\]/g,
             err: "长度不符合要求"
+        },
+        password: {
+            reg: /^[\s|\S]{6,16}$/g,
+            err: "密码长度为6-16位"
         }
     };
 
@@ -44,13 +48,15 @@
             return this.each(function() {
 
                 var setting = $.extend(true, {
-                        element: this,
-                        loadingSrc: "images/loading.gif"
-                    }, {
-                        regular: valid
-                    }, options),
+                    element: this,
+                    loadingSrc: "images/loading.gif"
+                }, {
+                    regular: valid
+                }, options);
 
-                    _element = $(this);
+                var _element = $(this);
+
+                var message = null;
 
                 _element.find('.required').on({
 
@@ -62,24 +68,30 @@
 
                         var $tip = $context.find('.valid-tip');
 
-                        var _initText = $this.attr("data-tip") || '';
 
-                        if ($tip.hasClass('loading')) {
-                            return false;
+                        message = {
+                            success: $this.attr("data-success") || '',
+                            error: $this.attr("data-error") || '',
+                            loading: $this.attr("data-loading") || '',
+                            init: $this.attr("data-tip") || ''
                         }
 
-                        if($this.attr("data-valid").indexOf("password")!==-1){
+                        //当ajax验证时，阻塞其他行为
+                        if ($tip.hasClass('loading')) {return false;}
 
-                            $this.attr("data-status", 0);
+                        //不知道干嘛的~写晕了的一段
+                        // if ($this.attr("data-valid").indexOf("password") !== -1) {
+                        //     console.log($this);
+                        //     $this.attr("data-status", 0);
 
-                            showTip($tip);
-                        }
+                        //     showTip($tip);
+                        // }
 
                         if (!parseInt($this.attr("data-status"))) {
-                            if (_initText) {
-                                $tip.html(_initText);
-                                showTip("init", $tip);
-                            }
+
+                            $tip.html(message.init);
+
+                            showTip("init", $tip);
 
                         }
 
@@ -93,28 +105,53 @@
                         var lenArr = [];
                         var $tip = $context.find('.valid-tip');
 
-                        $tip.addClass('none');
+                        //判断是否要做密码配对
+                        if ($this.attr('data-target') && $this.val()) {
 
+                            var password = $(setting.element).find('input[data-target]');
+
+                            var obj = $("#" + password.attr("data-target"));
+
+                            var objTip = obj.parents().eq(0).find('.valid-tip');
+
+
+                            if (password[0].value !== password[1].value) {
+
+
+                                objTip.html("确认密码与密码不一致");
+
+                                obj.attr("data-status", 0);
+
+                                showTip("error", objTip);
+
+                                //如果当前element和目标element一致时
+
+<<<<<<< HEAD
+                                if ($this.attr('data-target') === $this.attr('id')) {
+=======
                         if($this.attr('data-target') && $this.val()){
 
                             var $Compare = $("#"+$this.attr('data-target'));
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
 
-                            if($Compare[0].value !== $this[0].value){
+                                    return false;
 
-                                $Compare.attr("data-status",0);
+                                }
 
-                                $Compare.parents().eq(0).find('.valid-tip').html("确认密码与密码不一致");
+                            } else {
 
-                                showTip("error", $Compare.parents().eq(0).find('.valid-tip'));
-                            }else{
+                                obj.attr("data-status", 1);
 
-                                $Compare.attr("data-status",1);
+                                objTip.html("");
 
-                                $Compare.parents().eq(0).find('.valid-tip').html("");
+                                showTip("success", objTip);
 
-                                showTip("success", $Compare.parents().eq(0).find('.valid-tip'));
                             }
+
+
                         }
+
+                        //判断是否为空
 
                         if (!$this.val()) {
 
@@ -127,12 +164,13 @@
                             return false;
                         }
 
-                        if (Number($this.attr('data-status'))) {
 
-                            showTip('success', $tip);
+                        //判断验证状态是否为1
+                        if (Number($this.attr('data-status'))) {
 
                             return false;
                         }
+
 
                         if ($this.attr('data-valid')) {
 
@@ -146,18 +184,28 @@
                         }
 
                         setting.onBlur ? setting.onBlur() : false;
+<<<<<<< HEAD
+                    }
+                    //又恶心了,不知道绑change事件干嘛!
+                    // ,change: function(event) {
+                    //     // var $this = $(this);
+                    //     // var $context = $this.parents().eq(0);
+                    //     // var $tip = $context.find('.valid-tip');
+=======
                     },
 
                     change: function(event) {
                         var $this = $(this);
                         var $context = $this.parents().eq(0);
                         var $tip = $context.find('.valid-tip');
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
 
-                        showTip($tip);
+                    //     // showTip($tip);
 
-                        $this.attr("data-status", 0);
+                    //     // $this.attr("data-status", 0);
 
-                    }
+                    //     // setting.onChange ? setting.onChange() : false;
+                    // }
 
                 });
 
@@ -173,6 +221,24 @@
 
                 var $tip = $context.find('.valid-tip');
 
+<<<<<<< HEAD
+                var message = {
+                    success: $(el).attr("data-success") || '',
+                    error: $(el).attr("data-error") || '',
+                    loading: $(el).attr("data-loading") || '',
+                    init: $(el).attr("data-tip") || ''
+                };
+
+                if (typeof $(el).attr("data-status") === "undefined" || !Number($(el).attr("data-status"))) {
+
+                    if (!$tip.hasClass('loading')) {
+
+                        if(!$tip.html()){
+                            $tip.html(message.init);
+                        }
+
+                        showTip('error', $tip);
+=======
                 if (typeof $(el).attr("data-status") === "undefined" || !Number($(el).attr("data-status"))) {
 
                     if(!$tip.hasClass('loading')){
@@ -180,6 +246,7 @@
                         $tip.html($(el).attr("data-tip"));
 
                         showTip('error',$tip);
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
                     }
 
                     result = false;
@@ -202,6 +269,8 @@
 
             reg = null,
 
+            _success = '',
+
             $tip = context.find('.valid-tip');
 
         for (var i = 0, len = validArr.length; i < len; i++) {
@@ -221,10 +290,29 @@
                     return false;
 
                 } else {
-
                     _result = true;
+                }
 
-                };
+                if (validArr[i] === 'password') {
+
+                    var password = $(setting.element).find('input[data-target]');
+
+                    var obj = $("#" + password.attr("data-target"));
+
+                    var objTip = obj.parents().eq(0).find('.valid-tip');
+
+
+                    if (password[0].value !== password[1].value) {
+
+                        objTip.html("确认密码与密码不一致");
+
+                        obj.attr("data-status", 0);
+
+                        showTip("error", objTip);
+
+                    }
+
+                }
 
             }
 
@@ -248,27 +336,6 @@
 
                 }
 
-            }
-
-            if (validArr[i] === "password") {
-
-                var password = $(setting.element).find('input[type=password]');
-
-                if (password.eq(0).val() !== password.eq(1).val()) {
-
-                    $tip.html("确认密码与密码不一致");
-
-                    showTip("error", $tip);
-
-                    return false;
-
-                } else {
-
-                    $tip.html("");
-
-                    _result = true;
-
-                }
             }
 
             if (validArr[i] === "ajax") {
@@ -304,7 +371,7 @@
                             _result = true;
 
                             target.attr("data-status", 1);
-
+                            $tip.html("");
                             showTip("success", $tip);
                         }
 
@@ -319,6 +386,10 @@
         if (_result) {
 
             target.attr("data-status", 1);
+
+            _success = target.attr('data-success') || '';
+
+            $tip.html(_success);
 
             showTip("success", $tip);
         }
@@ -349,7 +420,13 @@
 
             return false;
         }
+<<<<<<< HEAD
+
+        //tip.addClass('loading');
+
+=======
         tip.addClass('loading');
+>>>>>>> a5bf8827682151df8ec9e4ab4624bad665710aa4
         tip.addClass(target).removeClass('none');
     }
 
