@@ -171,6 +171,10 @@
                             splitValid($this.attr('data-valid'), $this, $context, setting);
 
                         } else {
+                            /**
+                             * fix bug by:https://github.com/crazyfd
+                             * id:crazyfd
+                             */
                             $tip.html('');
                             showTip('success', $tip);
 
