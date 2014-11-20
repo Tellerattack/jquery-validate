@@ -171,7 +171,7 @@
                             splitValid($this.attr('data-valid'), $this, $context, setting);
 
                         } else {
-
+                            $tip.html('');
                             showTip('success', $tip);
 
                             $this.attr("data-status", 1);
@@ -322,7 +322,7 @@
 
                     target.data("limit", 1);
 
-                    $.get(target.attr("data-validUrl") + '?' + postName + '=' + target.val(), function(data) {
+                    $.post(target.attr("data-validUrl") + '?' + postName + '=' + target.val(), function(data) {
 
                         target.data("limit", 0);
 
