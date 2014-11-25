@@ -14,6 +14,10 @@
     var isIE6 = !!(document.all && !window.XMLHttpRequest);
 
     var valid = {
+        account:{
+            reg:/^(?![0-9]+$)[0-9A-Za-z_]{4,15}$/,
+            err:'必须为4-15位字母、数字组合，不能纯数字'
+        },
         email: {
             reg: /^([\w-_]+(?:\.[\w-_]+)*)@((?:[a-z0-9]+(?:-[a-zA-Z0-9]+)*)+\.[a-z]{2,6})$/i,
             err: '邮箱格式不正确'
@@ -171,10 +175,6 @@
                             splitValid($this.attr('data-valid'), $this, $context, setting);
 
                         } else {
-                            /**
-                             * fix bug by:https://github.com/crazyfd
-                             * id:crazyfd
-                             */
                             $tip.html('');
                             showTip('success', $tip);
 
@@ -182,7 +182,9 @@
                         }
 
                         setting.onBlur ? setting.onBlur() : false;
-                    },change: function(event) {
+                    },
+
+                    change: function(event) {
                         var $this = $(this);
                         var $context = $this.parents().eq(0);
                         var $tip = $context.find('.valid-tip');
@@ -278,7 +280,7 @@
                     var objTip = obj.parents().eq(0).find('.valid-tip');
 
 
-                    if (password[0].value !== password[1].value) {
+                    if (obj.length && password[0].value !== password[1].value) {
 
                         objTip.html("确认密码与密码不一致");
 
