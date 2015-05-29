@@ -61,6 +61,7 @@
                     var strategy = strategyAry.shift(); // 前删匹配方式并赋值
                     strategyAry.unshift(dom.value); // 前插value值
                     strategyAry.push(errorMsg); // 后插出错提示
+
                     return {
                         errorMsg: RULES[strategy].apply(dom, strategyAry),
                         el: dom
@@ -71,12 +72,14 @@
     };
 
     Validator.prototype.start = function() {
+        var result;
         for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
-            var errorMsg = validatorFunc();
-            if (errorMsg) {
-                return errorMsg;
+            var result = validatorFunc();
+            if(result.errorMsg){
+                return result;
             }
         };
+        return true;
     };
 
     Validator.prototype.showMsg = function(target, msg, status, callback) {
