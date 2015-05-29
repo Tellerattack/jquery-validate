@@ -21,7 +21,13 @@
         padding: 5px 10px;
         width: 300px;
     }
-    input.error{
+    div.active{
+        border:1px #32BC61 solid;
+    }
+    div.error{
+        border:1px #f00 solid;
+    }
+    div.error input{
         background-color:#FBF9BB;
         color:#f00;
     }
@@ -30,13 +36,21 @@
         outline: none;
     }
     .valid_message{
-        color:#127AC3;
+        color:#32BC61;
         position: absolute;
         left: 0;
         top: 30px;
     }
     .valid_message.error{
         color:#f00;
+    }
+    .valid_message.success{
+        background:url(sucess.png) no-repeat;
+        left: auto;
+        right: 5px;
+        top: 4px;
+        width: 16px;
+        height: 16px;
     }
     .none{display: none;}
     </style>
@@ -45,10 +59,13 @@
 <body>
     <form>
         <div>
-            <input class="required" value="1231231" type="text" name="email" data-tip="请输入您的昵称或邮箱" data-valid="between:6-10||onlyNum" data-error="用户名长度6-10位||只允许输入数字">
+            <input class="required" value="315359131@qq.com" type="text" name="email" data-tip="请输入您的邮箱" data-valid="isNonEmpty||isEmail" data-error="email不能为空||邮箱格式不正确">
         </div>
         <div>
-            <input class="required"  type="text" value="13430117447" data-tip="请输入您的昵称或邮箱" data-valid="isNonEmpty||isEmail" data-error="密码长度6-10位||邮箱格式不正确" name="nickname">
+            <input class="required"  type="password"  data-tip="请输入您的密码" data-valid="isNonEmpty||between:6-16" data-error="密码不能为空||密码长度6-16位" name="nickname">
+        </div>
+        <div>
+            <input class="required" value="王" type="text" name="email" data-tip="请输入您的姓名" data-valid="isNonEmpty||onlyZh||between:2-5" data-error="姓名不能为空||姓名只能为中文||姓名长度为2-5位">
         </div>
         <div>
             <input type="submit" value="提交">
@@ -59,17 +76,21 @@
     <script type="text/javascript" src="jquery-new-validate.js"></script>
     <script type="text/javascript">
     $('form').validate({
-        type:{
-            isEmail:function(value, errorMsg){
-                if (!/(^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$)/.test(value)) {
-                    return errorMsg;
-                }
+        onFocus:function(){
+            this.parent().addClass('active');
+        },
+        onBlur:function(){
+            var $parent = this.parent();
+            var _status = parseInt(this.attr('data-status'));
+            $parent.removeClass('active');
+            if(!_status){
+                 $parent.addClass('error');
             }
         }
     });
     $('form').on('submit', function(event) {
         event.preventDefault();
-       console.log( $(this).validate('submitValidate'));;
+       console.log($(this).validate('submitValidate') );;
     });
     </script>
 </body>

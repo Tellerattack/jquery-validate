@@ -16,28 +16,63 @@
 
     var RULES = {
         isNonEmpty: function(value, errorMsg) {
-            if (value.length === 0) {
+            //不能为空
+            if (!value.length) {
                 return errorMsg;
             }
         },
         minLength: function(value, length, errorMsg) {
+            //大于
+            if (value.length < length) {
+                return errorMsg;
+            }
+        },
+        maxLength: function(value, length, errorMsg) {
+            //小于
             if (value.length < length) {
                 return errorMsg;
             }
         },
         isMobile: function(value, errorMsg) {
+            //是否为手机号码
             if (!/(^1[3|5|8][0-9]{9}$)/.test(value)) {
                 return errorMsg;
             }
         },
+        isEmail: function(value, errorMsg) {
+            //是否为邮箱
+            if (!/(^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$)/.test(value)) {
+                return errorMsg;
+            }
+        },
         between: function(value, range, errorMsg) {
+            //大于小于
             var min = parseInt(range.split('-')[0]);
             var max = parseInt(range.split('-')[1]);
             if (value.length < min || value.length > max) {
                 return errorMsg;
             }
         },
+        onlyEn: function(value, errorMsg) {
+            //纯英文
+            if (!/^[A-Za-z]+$/.test(value)) {
+
+            }
+        },
+        onlyZh: function(value, errorMsg) {
+            //纯中文
+            if (!/^[\u4e00-\u9fa5]+$/.test(value)) {
+                return errorMsg;
+            }
+        },
         onlyNum: function(value, errorMsg) {
+            //数字包含小数
+            if (!/^[0-9]+([.][0-9]+){0,1}$/.test(value)) {
+                return errorMsg;
+            }
+        },
+        onlyInt: function(value, errorMsg) {
+            //整数
             if (!/^[0-9]*$/.test(value)) {
                 return errorMsg;
             }
@@ -46,6 +81,13 @@
 
     /*************************Validator类*****************************/
 
+    var setting = {
+        type: null,
+        onBlur: null,
+        onFocus: null,
+        onChange: null,
+        successTip: true
+    };
 
     var Validator = function() {
         this.cache = [];
@@ -61,7 +103,10 @@
                     var strategy = strategyAry.shift(); // 前删匹配方式并赋值
                     strategyAry.unshift(dom.value); // 前插value值
                     strategyAry.push(errorMsg); // 后插出错提示
-
+                    strategyAry.push(dom); // 后插dom
+                    if (!RULES[strategy]) {
+                        $.error('没有' + strategy + '规则，请检查命名或自行定义');
+                    }
                     return {
                         errorMsg: RULES[strategy].apply(dom, strategyAry),
                         el: dom
@@ -75,9 +120,13 @@
         var result;
         for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
             var result = validatorFunc();
-            if(result.errorMsg){
+             if(setting.successTip ){
+                new Validator().showMsg( $(result.el), '', 1);
+             }
+            if (result.errorMsg) {
                 return result;
             }
+
         };
         return true;
     };
@@ -91,8 +140,7 @@
         var $context = target.parent();
         var $msg = $context.find('.valid_message');
         $msg.remove();
-        target.removeClass('success error').addClass(_current);
-        $context.append('<span class="valid_message ' + _current + '">' + msg + '</span>');
+        $context.removeClass('success tip error').addClass(_current).append('<span class="valid_message ' + _current + '">' + msg + '</span>');
     };
 
     var plugin = {
@@ -100,14 +148,10 @@
             var $form = this;
             var $body = $('body');
             var $required = $form.find('.required');
-            var setting = $.extend({
-                onBlur: null,
-                onFocus: null,
-                onChange: null
-            }, options);
+            setting = $.extend(setting,options);
 
-            if (options.type) {
-                $.extend(RULES, options.type);
+            if (setting.type) {
+                $.extend(RULES, setting.type);
             }
 
             var validator = new Validator();
@@ -116,8 +160,10 @@
                 focus: function(event) {
                     var $this = $(this);
                     var _tipMsg = $this.attr('data-tip') || '';
-                    validator.showMsg($this, _tipMsg);
-                    setting.onFocus ? setting.onFocus.call($this,arguments) : '';
+                    if ($this.attr('data-status') === undefined) {
+                        validator.showMsg($this, _tipMsg);
+                    }
+                    setting.onFocus ? setting.onFocus.call($this, arguments) : '';
                 },
                 blur: function(event) {
                     var $this = $(this);
@@ -132,23 +178,24 @@
                         strategy = strategyAry.shift();
                         strategyAry.unshift(this.value);
                         strategyAry.push(errMsgAry[i]);
+                        strategyAry.push(this);
                         errMsg = RULES[strategy].apply(this, strategyAry);
                         if (errMsg) {
                             $this.attr('data-status', 0);
                             validator.showMsg($this, errMsg, 2);
-                            return false;
+                            break;
                         }
                     };
 
                     if (!errMsg) {
-                        $this.attr('data-status', 1).removeClass('error');
-                        $this.parent().find('.valid_message').remove();
+                        $this.attr('data-status', 1);
+                        setting.successTip ? validator.showMsg($this, '', 1) : $this.parent().find('.valid_message').remove();
                     }
 
-                    setting.onBlur ? setting.onBlur.call($this,argumemts) : '';
+                    setting.onBlur ? setting.onBlur.call($this, arguments) : '';
                 },
                 change: function(event) {
-                    setting.onChange ? setting.onChange.call($this,arguments) : '';
+                    setting.onChange ? setting.onChange.call($this, arguments) : '';
                 }
             }, '.required');
 
@@ -184,10 +231,11 @@
 
             if (result.errorMsg) {
                 $target = $(result.el);
-                 $target.attr('data-status',0)[0].focus();
-                 validator.showMsg($target,result.errorMsg, 2);
-                 return false;
+                //$target.attr('data-status', 0)[0].focus();
+                validator.showMsg($target, result.errorMsg, 2);
+                return false;
             }
+
 
             return true;
         }
