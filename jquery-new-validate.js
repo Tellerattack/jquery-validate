@@ -76,6 +76,13 @@
             if (!/^[0-9]*$/.test(value)) {
                 return errorMsg;
             }
+        },
+        isCheck: function(value, errorMsg, el) {
+            var i = 0;
+            var $collection = $(el).find('input:checked');
+            if(!$collection.length){
+                return errorMsg;
+            }
         }
     };
 
@@ -120,9 +127,9 @@
         var result;
         for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
             var result = validatorFunc();
-             if(setting.successTip ){
-                new Validator().showMsg( $(result.el), '', 1);
-             }
+            if (setting.successTip) {
+                new Validator().showMsg($(result.el), '', 1);
+            }
             if (result.errorMsg) {
                 return result;
             }
@@ -148,7 +155,7 @@
             var $form = this;
             var $body = $('body');
             var $required = $form.find('.required');
-            setting = $.extend(setting,options);
+            setting = $.extend(setting, options);
 
             if (setting.type) {
                 $.extend(RULES, setting.type);
@@ -197,7 +204,7 @@
                 change: function(event) {
                     setting.onChange ? setting.onChange.call($this, arguments) : '';
                 }
-            }, '.required');
+            }, 'input.required');
 
 
         },

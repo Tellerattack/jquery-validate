@@ -16,7 +16,7 @@
         margin: 15px 0;
     }
 
-    input {
+    input[type="text"],input[type="password"] {
         border: none;
         padding: 5px 10px;
         width: 300px;
@@ -27,11 +27,11 @@
     div.error{
         border:1px #f00 solid;
     }
-    div.error input{
+    div.error input[type="text"],div.error input[type="password"]{
         background-color:#FBF9BB;
         color:#f00;
     }
-    input:focus {
+    input[type="text"]:focus,div.error input[type="password"]:focus {
         border: none;
         outline: none;
     }
@@ -62,10 +62,16 @@
             <input class="required" value="315359131@qq.com" type="text" name="email" data-tip="请输入您的邮箱" data-valid="isNonEmpty||isEmail" data-error="email不能为空||邮箱格式不正确">
         </div>
         <div>
-            <input class="required"  type="password"  data-tip="请输入您的密码" data-valid="isNonEmpty||between:6-16" data-error="密码不能为空||密码长度6-16位" name="nickname">
+            <input class="required" value="1234567"  type="password"  data-tip="请输入您的密码" data-valid="isNonEmpty||between:6-16" data-error="密码不能为空||密码长度6-16位" name="nickname">
         </div>
         <div>
-            <input class="required" value="王" type="text" name="email" data-tip="请输入您的姓名" data-valid="isNonEmpty||onlyZh||between:2-5" data-error="姓名不能为空||姓名只能为中文||姓名长度为2-5位">
+            <input class="required" value="隔壁老王" type="text" name="email" data-tip="请输入您的姓名" data-valid="isNonEmpty||onlyZh||between:2-5" data-error="姓名不能为空||姓名只能为中文||姓名长度为2-5位">
+        </div>
+        <div>
+            <span class="required" data-valid="isCheck" data-error="性别必填">
+                <label><input type="radio" name="sex">男</label>
+                <label><input type="radio" name="sex">女</label>
+            </span>
         </div>
         <div>
             <input type="submit" value="提交">
@@ -78,6 +84,7 @@
     $('form').validate({
         onFocus:function(){
             this.parent().addClass('active');
+            return false;
         },
         onBlur:function(){
             var $parent = this.parent();
@@ -86,6 +93,7 @@
             if(!_status){
                  $parent.addClass('error');
             }
+            return false;
         }
     });
     $('form').on('submit', function(event) {
