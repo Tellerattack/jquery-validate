@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Jquery-validate by Janking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Jquery-validate</h1>
+      <h2 class="project-tagline">基于jQuery的前端验证插件，目前属于alpha版，欢迎提供宝贵的建议。</h2>
+      <a href="https://github.com/Janking/jquery-validate" class="btn">View on GitHub</a>
+      <a href="https://github.com/Janking/jquery-validate/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Janking/jquery-validate/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="validate" class="anchor" href="#validate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Validate</h1>
+
+<p>Validate是基于jQuery的一款轻量级验证插件，内置丰富的验证规则，还有灵活的自定义规则接口，HTML、CSS与JS之间的低耦合能让您自由布局和丰富样式，支持input,select,textarea的验证。</p>
+
+<h3>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h3>
+
+<ul>
+<li>浏览器支持：IE7+ 、Chrome、Firefox、Safari、Mobile Browser</li>
+<li>jQuery版本：1.7.0+</li>
+<li>version:1.2.0</li>
+</ul>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p><strong>载入jQuery、validate</strong></p>
+
+<div class="highlight highlight-html"><pre><span class="pl-s1">    &lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>jquery-1.11.1.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</span>
+<span class="pl-s1">    &lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>jquery-validate.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+
+<p><strong>DOM标签验证规则填写</strong></p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form_control<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span> <span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>315359131@qq.com<span class="pl-pds">"</span></span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>email<span class="pl-pds">"</span></span> <span class="pl-e">data-tip</span>=<span class="pl-s"><span class="pl-pds">"</span>请输入您的邮箱<span class="pl-pds">"</span></span> <span class="pl-e">data-valid</span>=<span class="pl-s"><span class="pl-pds">"</span>isNonEmpty||isEmail<span class="pl-pds">"</span></span> <span class="pl-e">data-error</span>=<span class="pl-s"><span class="pl-pds">"</span>email不能为空||邮箱格式不正确<span class="pl-pds">"</span></span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;
+&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form_control<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">select</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span> <span class="pl-e">data-valid</span>=<span class="pl-s"><span class="pl-pds">"</span>isNonEmpty<span class="pl-pds">"</span></span> <span class="pl-e">data-error</span>=<span class="pl-s"><span class="pl-pds">"</span>省份必填<span class="pl-pds">"</span></span>&gt;
+    &lt;<span class="pl-ent">option</span> <span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>&gt;请选择省份&lt;/<span class="pl-ent">option</span>&gt;
+    &lt;<span class="pl-ent">option</span> <span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>001<span class="pl-pds">"</span></span>&gt;001&lt;/<span class="pl-ent">option</span>&gt;
+    &lt;<span class="pl-ent">option</span> <span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>002<span class="pl-pds">"</span></span>&gt;002&lt;/<span class="pl-ent">option</span>&gt;
+  &lt;/<span class="pl-ent">select</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+
+<ul>
+<li>给需要验证的表单元素的class填入required（不建议在这个class上做其他样式）。</li>
+<li>建议input用独立div包裹，因为验证的message是从当前input的父元素上append生成。</li>
+<li>
+<strong>data-tip</strong>：在尚未验证而获取焦点时出现的提示。</li>
+<li>
+<strong>data-valid</strong>：验证规则，若有组合验证，以||符号分割。</li>
+<li>
+<strong>data-error</strong>：验证错误提示，对应data-valid，以||符号分割。</li>
+<li><strong>单选/复选比较特殊，需要添加元素包裹单选/复选集合，并在包裹元素上加验证规则。</strong></li>
+</ul>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form_control<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">span</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span> <span class="pl-e">data-valid</span>=<span class="pl-s"><span class="pl-pds">"</span>isChecked<span class="pl-pds">"</span></span> <span class="pl-e">data-error</span>=<span class="pl-s"><span class="pl-pds">"</span>性别必选<span class="pl-pds">"</span></span> <span class="pl-e">data-type</span>=<span class="pl-s"><span class="pl-pds">"</span>radio<span class="pl-pds">"</span></span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>radio<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>sex<span class="pl-pds">"</span></span>&gt;男&lt;/<span class="pl-ent">label</span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>radio<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>sex<span class="pl-pds">"</span></span>&gt;女&lt;/<span class="pl-ent">label</span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>radio<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>sex<span class="pl-pds">"</span></span>&gt;未知&lt;/<span class="pl-ent">label</span>&gt;
+  &lt;/<span class="pl-ent">span</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;
+&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form_control<span class="pl-pds">"</span></span>&gt;
+  &lt;<span class="pl-ent">span</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span> <span class="pl-e">data-valid</span>=<span class="pl-s"><span class="pl-pds">"</span>isChecked<span class="pl-pds">"</span></span> <span class="pl-e">data-error</span>=<span class="pl-s"><span class="pl-pds">"</span>标签至少选择一项<span class="pl-pds">"</span></span> <span class="pl-e">data-type</span>=<span class="pl-s"><span class="pl-pds">"</span>checkbox<span class="pl-pds">"</span></span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>checkbox<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>label<span class="pl-pds">"</span></span>&gt;红&lt;/<span class="pl-ent">label</span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>checkbox<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>label<span class="pl-pds">"</span></span>&gt;绿&lt;/<span class="pl-ent">label</span>&gt;
+      &lt;<span class="pl-ent">label</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>checkbox<span class="pl-pds">"</span></span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>label<span class="pl-pds">"</span></span>&gt;蓝&lt;/<span class="pl-ent">label</span>&gt;
+  &lt;/<span class="pl-ent">span</span>&gt;
+&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+
+<p><strong>JS调用</strong></p>
+
+<div class="highlight highlight-js"><pre><span class="pl-c">//**注意：必须以表单元素调用validate**</span>
+  $(<span class="pl-s"><span class="pl-pds">'</span>form<span class="pl-pds">'</span></span>).validate({
+    type<span class="pl-k">:</span>{
+      <span class="pl-en">isChecked</span>: <span class="pl-k">function</span>(<span class="pl-smi">value</span>, <span class="pl-smi">errorMsg</span>, <span class="pl-smi">el</span>) {
+        <span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>;
+        <span class="pl-k">var</span> $collection <span class="pl-k">=</span> $(el).<span class="pl-c1">find</span>(<span class="pl-s"><span class="pl-pds">'</span>input:checked<span class="pl-pds">'</span></span>);
+        <span class="pl-k">if</span> (<span class="pl-k">!</span>$collection.<span class="pl-c1">length</span>) {
+          <span class="pl-k">return</span> errorMsg;
+        }
+      }
+    },
+    <span class="pl-en">onFocus</span>: <span class="pl-k">function</span>() {
+      <span class="pl-v">this</span>.<span class="pl-c1">parent</span>().addClass(<span class="pl-s"><span class="pl-pds">'</span>active<span class="pl-pds">'</span></span>);
+      <span class="pl-k">return</span> <span class="pl-c1">false</span>;
+    },
+    <span class="pl-en">onBlur</span>: <span class="pl-k">function</span>() {
+      <span class="pl-k">var</span> $parent <span class="pl-k">=</span> <span class="pl-v">this</span>.<span class="pl-c1">parent</span>();
+      <span class="pl-k">var</span> _status <span class="pl-k">=</span> <span class="pl-c1">parseInt</span>(<span class="pl-v">this</span>.attr(<span class="pl-s"><span class="pl-pds">'</span>data-status<span class="pl-pds">'</span></span>));
+      $parent.removeClass(<span class="pl-s"><span class="pl-pds">'</span>active<span class="pl-pds">'</span></span>);
+      <span class="pl-k">if</span> (<span class="pl-k">!</span>_status) {
+        $parent.addClass(<span class="pl-s"><span class="pl-pds">'</span>error<span class="pl-pds">'</span></span>);
+      }
+      <span class="pl-k">return</span> <span class="pl-c1">false</span>;
+    }
+  });</pre></div>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Params</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>onFocus</td>
+        <td>arguments =&gt; event</td>
+        <td>Function</td>
+        <td>获取焦点时的callback</td>
+    </tr>
+    <tr>
+        <td>onBlur</td>
+        <td>arguments =&gt; event</td>
+        <td>Function</td>
+        <td>失去焦点时的callback</td>
+    </tr>
+    <tr>
+        <td>onChange</td>
+        <td>arguments =&gt; event</td>
+        <td>Function</td>
+        <td>触发change的callback</td>
+    </tr>
+    <tr>
+        <td>type</td>
+        <td colspan="3">自定义验证规则，参数顺序：value,errorMsg,el</td>
+    </tr>
+</table>
+
+<p><strong>表单提交前的验证</strong></p>
+
+<div class="highlight highlight-js"><pre>  $(<span class="pl-s"><span class="pl-pds">'</span>form<span class="pl-pds">'</span></span>).on(<span class="pl-s"><span class="pl-pds">'</span>submit<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">event</span>) {
+    <span class="pl-c1">event</span>.preventDefault();
+    $(<span class="pl-v">this</span>).validate(<span class="pl-s"><span class="pl-pds">'</span>submitValidate<span class="pl-pds">'</span></span>); <span class="pl-c">//return true or false;</span>
+  });</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Janking/jquery-validate">Jquery-validate</a> is maintained by <a href="https://github.com/Janking">Janking</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
