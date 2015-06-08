@@ -39,6 +39,7 @@
                 return errorMsg;
             }
         },
+
         isEmail: function(value, errorMsg) {
             //是否为邮箱
             if (!/(^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$)/.test(value)) {
@@ -46,6 +47,7 @@
             }
         },
         between: function(value, range, errorMsg) {
+
             //大于小于
             var min = parseInt(range.split('-')[0]);
             var max = parseInt(range.split('-')[1]);
@@ -62,6 +64,12 @@
         onlyZh: function(value, errorMsg) {
             //纯中文
             if (!/^[\u4e00-\u9fa5]+$/.test(value)) {
+                return errorMsg;
+            }
+        },
+        notInt:function(value,errorMsg){
+            //整数
+            if (/^[0-9]*$/.test(value)) {
                 return errorMsg;
             }
         },
@@ -83,6 +91,11 @@
             if(!$collection.length){
                 return errorMsg;
             }
+        },
+        isNickname:function(value,errorMsg,el){
+            if(!/^[A-Za-z0-9_\-\u4e00-\u9fa5]{2,20}$/i.test(value)){
+                return errorMsg;
+            }
         }
     };
 
@@ -93,6 +106,7 @@
         onBlur: null,
         onFocus: null,
         onChange: null,
+        onKeyup:null,
         successTip: true
     };
 
@@ -105,7 +119,7 @@
         for (var i = 0, rule; rule = rules[i++];) {
             (function(rule) {
                 var strategyAry = rule.strategy.split(':');
-                var errorMsg = rule.errorMsg
+                var errorMsg = rule.errorMsg;
                 self.cache.push(function() {
                     var strategy = strategyAry.shift(); // 前删匹配方式并赋值
                     strategyAry.unshift(dom.value); // 前插value值
@@ -126,15 +140,15 @@
     Validator.prototype.start = function() {
         var result;
         for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
-            var result = validatorFunc();
-            if (setting.successTip) {
+            result = validatorFunc();
+            if (setting.successTip && $(result.el).attr('data-status') === '1') {
                 new Validator().showMsg($(result.el), '', 1);
             }
             if (result.errorMsg) {
                 return result;
             }
 
-        };
+        }
         return true;
     };
 
@@ -164,7 +178,7 @@
 
             var validator = new Validator();
 
-            $body.on({
+            $form.on({
                 focus: function(event) {
                     var $this = $(this);
                     var _tipMsg = $this.attr('data-tip') || '';
@@ -181,7 +195,6 @@
                     var errCollection = $this.attr('data-error');
                     var errMsgAry = errCollection.split("||");
                     var strategyAry, strategy, errMsg;
-
                     for (var i = 0; i < validLen.length; i++) {
                         strategyAry = validLen[i].split(':');
                         strategy = strategyAry.shift();
@@ -194,17 +207,24 @@
                             validator.showMsg($this, errMsg, 2);
                             break;
                         }
-                    };
+                    }
 
                     if (!errMsg) {
                         $this.attr('data-status', 1);
                         setting.successTip ? validator.showMsg($this, '', 1) : $this.parent().find('.valid_message').remove();
                     }
 
-                    setting.onBlur ? setting.onBlur.call($this, arguments) : '';
+                    $this.attr('data-preValue', this.value);
+
+                    setting.onBlur ? setting.onBlur.call($this, arguments,validator.showMsg) : '';
                 },
                 change: function(event) {
+                    var $this = $(this);
                     setting.onChange ? setting.onChange.call($this, arguments) : '';
+                },
+                keyup:function(event){
+                    var $this = $(this);
+                    setting.onKeyup ? setting.onKeyup.call($this, arguments) : '';
                 }
             }, '.required');
 
@@ -230,7 +250,7 @@
                         strategy: validLen[i],
                         errorMsg: errMsgAry[i]
                     });
-                };
+                }
 
                 validator.add(el, ruleAry);
 
@@ -252,16 +272,17 @@
 
     $.fn.validate = function() {
         var method = arguments[0];
+        var args;
         if (plugin[method]) {
             method = plugin[method];
-            arguments = Array.prototype.slice.call(arguments, 1);
+            args = Array.prototype.slice.call(arguments, 1);
         } else if (typeof(method) == 'object' || !method) {
             method = plugin.init;
         } else {
             $.error('Method ' + method + ' does not exist on jQuery.validate Plugin');
             return this;
         }
-        return method.apply(this, arguments);
-    }
+        return method.apply(this, args || arguments);
+    };
 
-}))
+}));
